@@ -20,12 +20,31 @@ class Album extends Component {
   }
   play() {
     this.audioElement.play();
-    this.setState({ isPlaying: true });
+    this.setState({
+      isPlaying: true
+    });
   }
 
   pause() {
     this.audioElement.pause();
     this.setState({ isPlaying: false });
+  }
+
+  handleHover(song) {
+    this.setState({ hover:song });
+    const playButton = <span className = "ion-play"></span>;
+    const pauseButton = <span className = "ion-pause"></span>;
+    const isSameSong = this.state.currentSong === song;
+
+    if (this.state.isPlaying === false && this.state.hover === song) {
+      return playButton;
+    } else if (this.state.isPlaying === true && this.state.hover === song && isSameSong) {
+      return pauseButton;
+    }
+  }
+
+  handleHoverOff(song) {
+    this.setState({ hover: false });
   }
 
   setSong(song) {
@@ -44,10 +63,10 @@ class Album extends Component {
   }
 
   render() {
-    return(
+    return (
       <section className="album">
         <section id="album-info">
-          <img id="album-cover-art" src={this.state.album.albumCover} alt={this.state.album.title}/>
+          <img id="album-cover-art" src={this.state.album.albumCover} alt={this.state.album.title} />
           <div className="album-details">
             <h1 id="album-title">{this.state.album.title}</h1>
             <h2 className="artist">{this.state.album.artist}</h2>
@@ -62,10 +81,22 @@ class Album extends Component {
           </colgroup>
           <tbody>
             {this.state.album.songs.map( (song, index) =>
-            <tr className="song" key={index} onClick={() => this.handleSongClick(song)} >
-              <td className="song-number">{index+1}</td>
-              <td>{song.title}</td>
-              <td>{song.duration}</td>
+            <tr className="song" key={index} onClick={() => this.handleSongClick(song)}
+              onMouseEnter = {() => this.handleHover(song)}
+              onMouseLeave = {() => this.handleHoverOff(song)} >
+                <td className="song-number">{index+1}</td>
+            <td className = "song-title">{song.title}</td>
+            <td className = "song-duration">{song.duration}</td>
+            <td className = "song-actions">
+              <button>
+               {
+                 (this.state.hover === song) ?
+                 <span className = "ion-pause"></span>
+                 :
+                 <span className = "ion-play"></span>
+               }
+              </button>
+            </td>
             </tr>
             )}
           </tbody>
